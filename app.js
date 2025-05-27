@@ -54,7 +54,7 @@ const html = `
   </head>
   <body>
     <section>
-      Chuj ci w dupę!
+      Witaj swiecie!
     </section>
   </body>
 </html>
