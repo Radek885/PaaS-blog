@@ -23,7 +23,7 @@ const pool = new Pool({
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log("✔️  Tabela 'posts' gotowa.");
+    console.log("Tabela 'posts' gotowa.");
   } catch (err) {
     console.error("Błąd podczas tworzenia tabeli:", err);
     process.exit(1); // zakończ, jeśli nie możesz stworzyć tabeli
@@ -107,7 +107,7 @@ const html = `
   </head>
   <body>
     <section>
-      Witaj swiecie!
+      Backend dziala!
     </section>
   </body>
 </html>
