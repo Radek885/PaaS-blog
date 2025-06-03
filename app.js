@@ -1,11 +1,64 @@
 const express = require("express");
+const cors = require("cors");
+const { Pool } = require("pg");
+
 const app = express();
 const port = process.env.PORT || 3001;
 
+app.use(cors());
+app.use(express.json());
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
+
+(async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS posts (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log("✔️  Tabela 'posts' gotowa.");
+  } catch (err) {
+    console.error("❌ Błąd podczas tworzenia tabeli:", err);
+    process.exit(1); // zakończ, jeśli nie możesz stworzyć tabeli
+  }
+})();
+
+// API bloga
+app.get("/posts", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM posts ORDER BY created_at DESC");
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/posts", async (req, res) => {
+  const { title, content } = req.body;
+  if (!title || !content) return res.status(400).json({ error: "Missing title or content" });
+
+  try {
+    const result = await pool.query(
+      "INSERT INTO posts (title, content) VALUES ($1, $2) RETURNING *",
+      [title, content]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// HTML na / (np. jak teraz)
 app.get("/", (req, res) => res.type('html').send(html));
 
-const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-
+const server = app.listen(port, () => console.log(`App listening on port ${port}!`));
 server.keepAliveTimeout = 120 * 1000;
 server.headersTimeout = 120 * 1000;
 
