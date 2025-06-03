@@ -25,7 +25,7 @@ const pool = new Pool({
     `);
     console.log("✔️  Tabela 'posts' gotowa.");
   } catch (err) {
-    console.error("❌ Błąd podczas tworzenia tabeli:", err);
+    console.error("Błąd podczas tworzenia tabeli:", err);
     process.exit(1); // zakończ, jeśli nie możesz stworzyć tabeli
   }
 })();
