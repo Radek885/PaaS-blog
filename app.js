@@ -24,8 +24,16 @@ console.log("DATABASE_URL:", process.env.DATABASE_URL);
 (async () => {
   try {
     await pool.query(`
-      DROP TABLE posts;
-    `);
+    CREATE TABLE IF NOT EXISTS posts (
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      username TEXT DEFAULT 'Anonim',
+      image_url TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
     console.log("Tabela 'posts' gotowa.");
   } catch (err) {
     console.error("Błąd podczas tworzenia tabeli:", err);
@@ -44,19 +52,22 @@ app.get("/posts", async (req, res) => {
 });
 
 app.post("/posts", async (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, username = "Anonim", image_url = null } = req.body;
   if (!title || !content) return res.status(400).json({ error: "Missing title or content" });
 
   try {
     const result = await pool.query(
-      "INSERT INTO posts (title, content) VALUES ($1, $2) RETURNING *",
-      [title, content]
+      `INSERT INTO posts (title, content, username, image_url)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [title, content, username || "Anonim", image_url]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 app.get("/", (req, res) => res.type('html').send(html));
 
