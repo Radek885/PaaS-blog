@@ -24,12 +24,7 @@ console.log("DATABASE_URL:", process.env.DATABASE_URL);
 (async () => {
   try {
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS posts (
-        id SERIAL PRIMARY KEY,
-        title TEXT NOT NULL,
-        content TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
+      DROP TABLE posts;
     `);
     console.log("Tabela 'posts' gotowa.");
   } catch (err) {
@@ -63,7 +58,6 @@ app.post("/posts", async (req, res) => {
   }
 });
 
-// HTML na / (np. jak teraz)
 app.get("/", (req, res) => res.type('html').send(html));
 
 const server = app.listen(port, () => console.log(`App listening on port ${port}!`));
