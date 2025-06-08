@@ -1,15 +1,15 @@
 const express = require("express");
 const allowedOrigins = ["https://paas-blog-frontend.onrender.com"];
 
-app.use(cors({
-  origin: allowedOrigins,
-  methods: ["GET", "POST"],
-}));
-
 const { Pool } = require("pg");
 
 const app = express();
 const port = process.env.PORT || 3001;
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST"],
+}));
 
 app.use(express.json());
 
